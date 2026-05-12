@@ -1,31 +1,32 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import EventCard from "./components/eventCard";
 import { mockEvents } from "./data/mockEvents";
-import type { Event } from "./types/event";
 
 function App() {
-  const [events, setEvents] = useState<Event[]>([]);
-
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCity, setSelectedCity] = useState("All");
   const [selectedSource, setSelectedSource] = useState("All");
   const [selectedDateFilter, setSelectedDateFilter] = useState("All");
 
-  useEffect(() => {
-    fetch("http://localhost:5001/api/events")
-      .then((res) => res.json())
-      .then(setEvents);
-  }, []);
+  const eventList = mockEvents;
 
-  // TODO: remove mockEvents
-  const eventList = events.length > 0 ? events : mockEvents;
+  const cities = [
+    "All",
+    ...new Set(eventList.map((event) => event.city).filter(Boolean)),
+  ];
 
-  const filteredEvents = mockEvents.filter((event) => {
+  const sources = [
+    "All",
+    ...new Set(eventList.map((event) => event.source).filter(Boolean)),
+  ];
+
+  const filteredEvents = eventList.filter((event) => {
     const query = searchQuery.toLowerCase();
+    const artistText = event.artists?.join(" ") ?? "";
 
     const matchesSearch =
       (event.title ?? "").toLowerCase().includes(query) ||
-      (event.artists ?? []).join(" ").toLowerCase().includes(query) ||
+      artistText.toLowerCase().includes(query) ||
       (event.venue ?? "").toLowerCase().includes(query) ||
       (event.city ?? "").toLowerCase().includes(query);
 
@@ -52,10 +53,9 @@ function App() {
   });
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-white p-10">
+    <main className="min-h-screen bg-zinc-950 p-10 text-white">
       <h1 className="mb-8 text-4xl font-bold">Event Aggregator</h1>
 
-      {/* SEARCH + FILTERS */}
       <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-4">
         <input
           type="text"
@@ -70,9 +70,11 @@ function App() {
           onChange={(e) => setSelectedCity(e.target.value)}
           className="w-full rounded-lg bg-zinc-900 px-4 py-3 text-white outline-none"
         >
-          <option value="All">All Cities</option>
-          <option value="Los Angeles">Los Angeles</option>
-          <option value="New York">New York</option>
+          {cities.map((city) => (
+            <option key={city} value={city}>
+              {city === "All" ? "All Cities" : city}
+            </option>
+          ))}
         </select>
 
         <select
@@ -80,17 +82,11 @@ function App() {
           onChange={(e) => setSelectedSource(e.target.value)}
           className="w-full rounded-lg bg-zinc-900 px-4 py-3 text-white outline-none"
         >
-          <option value="All">All Sources</option>
-          <option value="RA">RA</option>
-          <option value="Dice">Dice</option>
-          <option value="Songkick">Songkick</option>
-          <option value="POSH">POSH</option>
-          <option value="Bandsintown">Bandsintown</option>
-          <option value="Eventbrite">Eventbrite</option>
-          <option value="Shotgun">Shotgun</option>
-          <option value="Ticketmaster">Ticketmaster</option>
-          <option value="SeeTickets">SeeTickets</option>
-          <option value="AXS">AXS</option>
+          {sources.map((source) => (
+            <option key={source} value={source}>
+              {source === "All" ? "All Sources" : source}
+            </option>
+          ))}
         </select>
 
         <select
@@ -105,7 +101,6 @@ function App() {
         </select>
       </div>
 
-      {/* EVENT GRID */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {filteredEvents.map((event) => (
           <EventCard key={event.id} event={event} />

@@ -28,7 +28,9 @@ export default function EventCard({ event }: Props) {
         <div>
           <h2 className="text-xl font-bold text-white">{event.title}</h2>
 
-          <p className="text-zinc-400">{event.artists.join(", ")}</p>
+          <p className="text-zinc-400">
+            {event.artists?.join(", ") ?? "Unknown artist"}
+          </p>
         </div>
 
         <div className="text-sm text-zinc-500">
