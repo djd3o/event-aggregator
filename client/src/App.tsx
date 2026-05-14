@@ -5,7 +5,28 @@ import type { Event } from "./types/event";
 function App() {
   const [events, setEvents] = useState<Event[]>();
   const [cityQuery, setCityQuery] = useState("");
+  const [dateFilter, setDateFilter] = useState("1month");
   const [loading, setLoading] = useState(false);
+
+  const getMaxDate = () => {
+    const maxDate = new Date();
+
+    if (dateFilter === "3months") maxDate.setMonth(maxDate.getMonth() + 3);
+    else if (dateFilter === "6months") maxDate.setMonth(maxDate.getMonth() + 6);
+    else if (dateFilter === "1year")
+      maxDate.setFullYear(maxDate.getFullYear() + 1);
+    else maxDate.setMonth(maxDate.getMonth() + 1);
+
+    return maxDate;
+  };
+
+  const filteredEvents = events?.filter((event) => {
+    const eventDate = new Date(event.date);
+    const today = new Date();
+    const maxDate = getMaxDate();
+
+    return eventDate >= today && eventDate <= maxDate;
+  });
 
   const fetchEventsByCity = async () => {
     if (!cityQuery.trim()) return;
@@ -14,7 +35,9 @@ function App() {
       setLoading(true);
 
       const response = await fetch(
-        `http://localhost:5001/api/events?city=${encodeURIComponent(cityQuery)}`
+        `http://localhost:5001/api/events?city=${encodeURIComponent(
+          cityQuery
+        )}&dateFilter=${dateFilter}`
       );
 
       const data = await response.json();
@@ -44,31 +67,36 @@ function App() {
           placeholder="Enter city..."
           value={cityQuery}
           onChange={(e) => setCityQuery(e.target.value)}
-          className="
-            flex-1
+          className="flex-1 rounded-xl bg-zinc-900 px-4 py-3 text-white placeholder-zinc-500 outline-none"
+        />
+
+        {events && (
+          <select
+            value={dateFilter}
+            onChange={(e) => setDateFilter(e.target.value)}
+            className="
             rounded-xl
             bg-zinc-900
-            px-4
+            px-3
             py-3
+            pr-8
+            text-center
             text-white
-            placeholder-zinc-500
             outline-none
+            appearance-none
+            md:w-48
           "
-        />
+          >
+            <option value="1month">1 month</option>
+            <option value="3months">3 months</option>
+            <option value="6months">6 months</option>
+            <option value="1year">1 year</option>
+          </select>
+        )}
 
         <button
           onClick={fetchEventsByCity}
-          className="
-            w-full
-            md:w-80
-            rounded-xl
-            bg-zinc-900
-            px-4
-            py-3
-            text-white
-            placeholder-zinc-500
-            outline-none
-          "
+          className="w-full rounded-xl bg-zinc-900 px-4 py-3 text-white outline-none md:w-80"
         >
           Search
         </button>
@@ -80,7 +108,7 @@ function App() {
         <p className="text-zinc-400">Search for a city to see events.</p>
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {events.map((event) => (
+          {filteredEvents.map((event) => (
             <EventCard key={event.id} event={event} />
           ))}
         </div>
