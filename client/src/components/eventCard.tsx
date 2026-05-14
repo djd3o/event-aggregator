@@ -48,7 +48,13 @@ export default function EventCard({ event }: Props) {
           ))}
         </div>
 
-        <Button className="w-full">Get Tickets</Button>
+        {event.ticketUrl && (
+          <Button asChild className="w-full">
+            <a href={event.ticketUrl} target="_blank" rel="noreferrer">
+              Get Tickets
+            </a>
+          </Button>
+        )}
       </CardContent>
     </Card>
   );
