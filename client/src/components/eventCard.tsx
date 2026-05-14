@@ -20,7 +20,7 @@ export default function EventCard({ event }: Props) {
 
       <CardContent className="p-4 space-y-3">
         <div className="flex items-center justify-between">
-          <Badge>{event.source}</Badge>
+          <Badge className="text-white hover:bg-zinc-200">{event.source}</Badge>
 
           <span className="text-sm text-zinc-400">{event.date}</span>
         </div>

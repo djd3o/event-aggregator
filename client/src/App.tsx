@@ -59,14 +59,15 @@ function App() {
         <button
           onClick={fetchEventsByCity}
           className="
+            w-full
+            md:w-80
             rounded-xl
-            bg-white
-            px-6
+            bg-zinc-900
+            px-4
             py-3
-            font-semibold
-            text-black
-            transition-opacity
-            hover:opacity-80
+            text-white
+            placeholder-zinc-500
+            outline-none
           "
         >
           Search
