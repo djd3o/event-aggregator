@@ -1,10 +1,9 @@
 import { useState } from "react";
 import EventCard from "./components/eventCard";
-import { mockEvents } from "./data/mockEvents";
 import type { Event } from "./types/event";
 
 function App() {
-  const [events, setEvents] = useState<Event[]>(mockEvents);
+  const [events, setEvents] = useState<Event[]>();
   const [cityQuery, setCityQuery] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -26,12 +25,7 @@ function App() {
         throw new Error(data.message || "Failed to fetch events");
       }
 
-      if (Array.isArray(data)) {
-        setEvents(data);
-      } else {
-        console.error("Expected array:", data);
-        setEvents([]);
-      }
+      setEvents(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("Failed to fetch events:", error);
       setEvents([]);
@@ -81,6 +75,8 @@ function App() {
 
       {loading ? (
         <p className="text-zinc-400">Loading events...</p>
+      ) : !events || events.length === 0 ? (
+        <p className="text-zinc-400">Search for a city to see events.</p>
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           {events.map((event) => (
