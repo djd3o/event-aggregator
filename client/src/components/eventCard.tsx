@@ -22,7 +22,13 @@ export default function EventCard({ event }: Props) {
         <div className="flex items-center justify-between">
           <Badge className="text-white hover:bg-zinc-200">{event.source}</Badge>
 
-          <span className="text-sm text-zinc-400">{event.date}</span>
+          <span className="text-sm text-zinc-400">
+            {new Date(event.date).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </span>
         </div>
 
         <div>
