@@ -11,14 +11,14 @@ type Props = {
 
 export default function EventCard({ event }: Props) {
   return (
-    <Card className="overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-xl bg-zinc-900 border-zinc-800">
+    <Card className="flex h-full flex-col overflow-hidden border-zinc-800 bg-zinc-900 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl">
       <img
         src={event.imageUrl}
         alt={event.title}
         className="h-56 w-full object-cover"
       />
 
-      <CardContent className="p-4 space-y-3">
+      <CardContent className="flex flex-1 flex-col space-y-4 p-4">
         <div className="flex items-center justify-between">
           <Badge className="text-white hover:bg-zinc-200">{event.source}</Badge>
 
@@ -35,28 +35,34 @@ export default function EventCard({ event }: Props) {
           <h2 className="text-xl font-bold text-white">{event.title}</h2>
 
           <p className="text-zinc-400">
-            {event.artists?.join(", ") ?? "Unknown artist"}
+            {event.artists?.join(", ") || "Unknown artist"}
           </p>
         </div>
 
         <div className="text-sm text-zinc-500">
           <p>{event.venue}</p>
+
           <p>
             {event.city}, {event.country}
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          {event.genres?.map((genre) => (
-            <Badge key={genre} variant="secondary">
-              {genre}
-            </Badge>
-          ))}
-        </div>
+        {event.genres && event.genres.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {event.genres.map((genre) => (
+              <Badge key={genre} variant="secondary">
+                {genre}
+              </Badge>
+            ))}
+          </div>
+        )}
 
         {event.ticketUrl && (
-          <Button asChild className="w-full">
-            <a href={event.ticketUrl} target="_blank" rel="noreferrer">
+          <Button
+            asChild
+            className="mt-auto w-full bg-white text-black hover:bg-zinc-200"
+          >
+            <a href={event.ticketUrl} target="_blank" rel="noopener noreferrer">
               Get Tickets
             </a>
           </Button>
