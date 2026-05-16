@@ -60,7 +60,7 @@ export default function EventCard({ event }: Props) {
         {event.ticketUrl && (
           <Button
             asChild
-            className="mt-auto w-full bg-white text-black hover:bg-zinc-200"
+            className="mt-auto w-full bg-zinc-800 text-white hover:bg-zinc-700"
           >
             <a href={event.ticketUrl} target="_blank" rel="noopener noreferrer">
               Get Tickets
